@@ -30,6 +30,10 @@ export default function CardsAtalho() {
                     <h3>Cadastrar Doação</h3>
                 </div>
 
+                <div className="card">
+                    <h3>Cadastrar Produtos</h3>
+                </div>
+
             </div>
         </>
     )
