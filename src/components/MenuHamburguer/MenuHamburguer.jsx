@@ -32,6 +32,7 @@ export default function MenuHamburguer() {
                         <li>Cadastrar doações</li>
                         <li>Cadastrar mensalidades</li>
                         <li>Cadastrar cargos</li>
+                        <li>Cadastrar Produtos</li>  
                     </ul>
                 </div>
 
