@@ -1,4 +1,5 @@
 import './style.css'
+import { Link } from 'react-router-dom';
 
 export default function CardsAtalho() {
     return (
@@ -7,7 +8,9 @@ export default function CardsAtalho() {
 
             <div className="cards">
                 <div className="card">
-                    <h3>Cadastrar Campanha</h3>
+                    <Link to="/campanha">
+                        <h3>Cadastrar Campanha</h3>
+                    </Link>
                 </div>
 
                 <div className="card">
@@ -19,7 +22,9 @@ export default function CardsAtalho() {
                 </div>
 
                 <div className="card">
-                    <h3>Cadastrar Campanha</h3>
+                <Link to="/campanhas">
+                    <h3>Campanhas Cadastradas</h3>
+                </Link>
                 </div>
 
                 <div className="card">
