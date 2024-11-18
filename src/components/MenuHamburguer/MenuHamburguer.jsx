@@ -2,6 +2,7 @@ import './style.css'
 import { useState } from "react";
 import ImgMimosa from '../../assets/imgs/logo_mimosa.jpg';
 import IconNotificacao from '../../assets/imgs/notificacao.png';
+import { Link } from 'react-router-dom';
 
 export default function MenuHamburguer() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,12 +23,16 @@ export default function MenuHamburguer() {
                 <div className={`side-menu ${isMenuOpen ? 'open' : ''}`}>
                     <ul>
                         <div className='side-cabecalho'>
-                            <h2>Menu</h2>
+                            <Link to="/" className="link-hamburg">
+                                <h2>Menu</h2>
+                            </Link>
                             <li onClick={toggleMenu}>X</li>
                         </div>
                         <li>Cadastrar doações</li>
                         <li>Cadastrar associados</li>
-                        <li>Cadastrar campanhas</li>
+                        <Link to="/campanha" className="link-hamburg">
+                            <li>Cadastrar campanhas</li>
+                        </Link>
                         <li>Cadastrar títulos</li>
                         <li>Cadastrar doações</li>
                         <li>Cadastrar mensalidades</li>
