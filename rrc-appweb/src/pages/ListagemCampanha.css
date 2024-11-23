@@ -1,0 +1,113 @@
+/* Container geral da lista de campanhas */
+.listagem-campanha-container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Título da lista de campanhas */
+.listagem-campanha-container h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Estilo para a lista de campanhas */
+.listagem-campanha-ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Estilo de cada item da campanha */
+.listagem-campanha-li {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  display: block; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  position: relative;
+}
+
+/* Nome da campanha */
+.listagem-campanha-li strong {
+  font-size: 1.3rem;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+/* Descrição da campanha */
+.listagem-campanha-p {
+  font-size: 1rem;
+  color: #555;
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+/* Data da campanha */
+.listagem-campanha-span {
+  font-size: 0.9rem;
+  color: #777;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Estilo do botão de excluir campanha */
+.listagem-campanha-btn-excluir {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1rem;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Efeito hover no botão de excluir */
+.listagem-campanha-btn-excluir:hover {
+  background-color: #e60000;
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Estilo do erro */
+.listagem-campanha-erro {
+  color: red;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+  .listagem-campanha-container {
+    width: 95%;
+  }
+
+  .listagem-campanha-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .listagem-campanha-li {
+    padding: 12px;
+  }
+
+  .listagem-campanha-btn-excluir {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+}
