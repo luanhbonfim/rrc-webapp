@@ -36,7 +36,9 @@ export default function CardsAtalho() {
                 </div>
 
                 <div className="card">
+                <Link to="/gerenciar-tipos-produtos">
                     <h3>Cadastrar Produtos</h3>
+                </Link>
                 </div>
 
             </div>

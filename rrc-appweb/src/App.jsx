@@ -4,6 +4,7 @@ import CardsAtalho from './components/CardsAtalho/CardsAtalho';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Campanha from './pages/Campanha';
 import ListagemCampanha from './pages/ListagemCampanha';
+import GerenciarProdutos from './pages/GerenciarTiposProdutos';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<CardsAtalho />} />
           <Route path="/campanha" element={<Campanha />} />
           <Route path="/campanhas" element={<ListagemCampanha />} />
+          <Route path="/gerenciar-tipos-produtos" element={<GerenciarProdutos />} />
         </Routes>
       </div>
     </Router>

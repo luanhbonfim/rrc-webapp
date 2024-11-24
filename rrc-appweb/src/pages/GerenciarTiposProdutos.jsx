@@ -1,6 +1,6 @@
-import './style.css';
 import React, { useState } from "react";
- 
+import "./GerenciarTiposProdutos.css";  
+
 const GerenciarProdutos = () => {
   const [nome, setNome] = useState("");
   const [quantidade, setQuantidade] = useState("");
@@ -18,9 +18,10 @@ const GerenciarProdutos = () => {
       });
       return;
     }
+    const dataAtual = new Date().toLocaleString();  // Data atual no formato local
     setAdicionados([
       ...adicionados,
-      { nome, quantidade, unidade, detalhes: detalhes || "Nenhum detalhe" },
+      { nome, quantidade, unidade, detalhes: detalhes || "Nenhum detalhe", data: dataAtual },
     ]);
     setNome("");
     setQuantidade("");
@@ -44,9 +45,7 @@ const GerenciarProdutos = () => {
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial", textAlign: "center" }}>
-      <h2 style={{ fontWeight: "bold", marginBottom: "20px" }}>
-        Gerenciar Produtos
-      </h2>
+      <h2 style={{ fontWeight: "bold", marginBottom: "20px" }}>Gerenciar Produtos</h2>
       <div
         style={{
           display: "flex",
@@ -175,6 +174,7 @@ const GerenciarProdutos = () => {
                 <th>Quantidade</th>
                 <th>Unidade</th>
                 <th>Detalhes</th>
+                <th>Data</th> {/* Nova coluna */}
                 <th>Ações</th>
               </tr>
             </thead>
@@ -185,6 +185,7 @@ const GerenciarProdutos = () => {
                   <td>{produto.quantidade}</td>
                   <td>{produto.unidade}</td>
                   <td>{produto.detalhes}</td>
+                  <td>{produto.data}</td> {/* Exibe a data */}
                   <td>
                     <button
                       onClick={() => excluirProduto(index, true)}
@@ -219,6 +220,7 @@ const GerenciarProdutos = () => {
                 <th>Quantidade</th>
                 <th>Unidade</th>
                 <th>Detalhes</th>
+                <th>Data</th> {/* Nova coluna */}
                 <th>Ações</th>
               </tr>
             </thead>
@@ -229,6 +231,7 @@ const GerenciarProdutos = () => {
                   <td>{produto.quantidade}</td>
                   <td>{produto.unidade}</td>
                   <td>{produto.detalhes}</td>
+                  <td>{produto.data}</td> {/* Exibe a data */}
                   <td>
                     <button
                       onClick={() => excluirProduto(index, false)}
