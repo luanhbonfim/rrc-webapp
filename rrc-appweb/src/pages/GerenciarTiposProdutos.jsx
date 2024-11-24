@@ -17,13 +17,17 @@ const GerenciarProdutos = () => {
 
   // Função para carregar os produtos cadastrados do banco de dados
   useEffect(() => {
-    produtoService.getAllProdutos()
-      .then((response) => {
-        setCadastrados(Array.isArray(response.data) ? response.data : []);
-      })
-      .catch((error) => {
+    const fetchProdutos = async () => {
+      try {
+        const data = await produtoService.getAllProdutos();
+        console.log("Produtos recebidos da API:", data);
+        setCadastrados(data.rows || []); // Atualiza o estado com os produtos da propriedade 'rows'
+      } catch (error) {
         console.error("Erro ao carregar produtos cadastrados", error);
-      });
+      }
+    };
+  
+    fetchProdutos();
   }, []);
   
 
