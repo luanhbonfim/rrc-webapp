@@ -37,7 +37,9 @@ export default function MenuHamburguer() {
                         <li>Cadastrar doações</li>
                         <li>Cadastrar mensalidades</li>
                         <li>Cadastrar cargos</li>
-                        <li>Cadastrar Produtos</li>  
+                        <Link to="/gerenciar-tipos-produtos" className="link-hamburg">
+                            <li>Cadastrar Produtos</li>
+                        </Link>
                     </ul>
                 </div>
 
