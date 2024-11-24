@@ -4,9 +4,9 @@ class DataBase {
     constructor() {
         this.pool = mysql.createPool({
             host: 'localhost',
-            user: 'root',
-            password: '',
-            database: 'rotaract_db',
+            user: 'root',   
+            password: '',   
+            database: 'pid',  
         });
     }
 

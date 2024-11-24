@@ -1,5 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import ProdutoService from "../services/ProdutoService.js"; // Importando o serviço
 import "./GerenciarTiposProdutos.css";  
+
+const produtoService = new ProdutoService();
+
 
 const GerenciarProdutos = () => {
   const [nome, setNome] = useState("");
@@ -9,6 +13,19 @@ const GerenciarProdutos = () => {
   const [adicionados, setAdicionados] = useState([]);
   const [cadastrados, setCadastrados] = useState([]);
   const [erros, setErros] = useState({ nome: false, quantidade: false });
+  const [produtoEditando, setProdutoEditando] = useState(null); // Para editar um produto
+
+  // Função para carregar os produtos cadastrados do banco de dados
+  useEffect(() => {
+    produtoService.getAllProdutos()
+      .then((response) => {
+        setCadastrados(Array.isArray(response.data) ? response.data : []);
+      })
+      .catch((error) => {
+        console.error("Erro ao carregar produtos cadastrados", error);
+      });
+  }, []);
+  
 
   const adicionarProduto = () => {
     if (!nome || !quantidade) {
@@ -18,10 +35,12 @@ const GerenciarProdutos = () => {
       });
       return;
     }
-    const dataAtual = new Date().toLocaleString();  // Data atual no formato local
+    const dataAtual = new Date();
+    const dataFormatada = `${dataAtual.getFullYear()}-${(dataAtual.getMonth() + 1).toString().padStart(2, "0")}-${dataAtual.getDate().toString().padStart(2, "0")} ${dataAtual.getHours().toString().padStart(2, "0")}:${dataAtual.getMinutes().toString().padStart(2, "0")}:${dataAtual.getSeconds().toString().padStart(2, "0")}`;
+    
     setAdicionados([
       ...adicionados,
-      { nome, quantidade, unidade, detalhes: detalhes || "Nenhum detalhe", data: dataAtual },
+      { nome, quantidade, unidade, detalhes: detalhes || "Nenhum detalhe", data: dataFormatada },
     ]);
     setNome("");
     setQuantidade("");
@@ -31,16 +50,68 @@ const GerenciarProdutos = () => {
   };
 
   const cadastrarProdutos = () => {
-    setCadastrados([...cadastrados, ...adicionados]);
-    setAdicionados([]);
+    produtoService.adicionarProduto(adicionados)
+      .then(() => {
+        setCadastrados([...cadastrados, ...adicionados]);
+        setAdicionados([]);
+      })
+      .catch((error) => {
+        console.error("Erro ao cadastrar produtos", error);
+      });
   };
 
   const excluirProduto = (index, isAdicionado) => {
     if (isAdicionado) {
       setAdicionados(adicionados.filter((_, i) => i !== index));
     } else {
-      setCadastrados(cadastrados.filter((_, i) => i !== index));
+      produtoService.excluirProduto(cadastrados[index].id)  // Usando id para deletar
+        .then(() => {
+          setCadastrados(cadastrados.filter((_, i) => i !== index));
+        })
+        .catch((error) => {
+          console.error("Erro ao excluir produto", error);
+        });
     }
+  };
+
+  const editarProduto = (produto) => {
+    setProdutoEditando(produto);
+    setNome(produto.nome);
+    setQuantidade(produto.quantidade);
+    setUnidade(produto.unidade);
+    setDetalhes(produto.detalhes);
+  };
+
+  const salvarEdicao = () => {
+    if (!nome || !quantidade) {
+      setErros({
+        nome: !nome,
+        quantidade: !quantidade,
+      });
+      return;
+    }
+    produtoService.atualizarProduto(produtoEditando.id, { nome, quantidade, unidade, detalhes })
+      .then(() => {
+        const produtosAtualizados = cadastrados.map((produto) =>
+          produto.id === produtoEditando.id
+            ? { ...produto, nome, quantidade, unidade, detalhes }
+            : produto
+        );
+        setCadastrados(produtosAtualizados);
+        cancelarEdicao();
+      })
+      .catch((error) => {
+        console.error("Erro ao atualizar produto", error);
+      });
+  };
+
+  const cancelarEdicao = () => {
+    setProdutoEditando(null);
+    setNome("");
+    setQuantidade("");
+    setDetalhes("");
+    setUnidade("KG");
+    setErros({ nome: false, quantidade: false });
   };
 
   return (
@@ -63,7 +134,9 @@ const GerenciarProdutos = () => {
             boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <h3 style={{ marginBottom: "20px" }}>Cadastrar Produtos</h3>
+          <h3 style={{ marginBottom: "20px" }}>
+            {produtoEditando ? "Editar Produto" : "Cadastrar Produtos"}
+          </h3>
           <input
             type="text"
             placeholder="Digite o nome do produto *"
@@ -130,7 +203,7 @@ const GerenciarProdutos = () => {
             }}
           />
           <button
-            onClick={adicionarProduto}
+            onClick={produtoEditando ? salvarEdicao : adicionarProduto}
             style={{
               backgroundColor: "#007bff",
               color: "#fff",
@@ -141,21 +214,23 @@ const GerenciarProdutos = () => {
               cursor: "pointer",
             }}
           >
-            + Adicionar Produto
+            {produtoEditando ? "Salvar Edição" : "+ Adicionar Produto"}
           </button>
-          <button
-            onClick={cadastrarProdutos}
-            style={{
-              backgroundColor: "#28a745",
-              color: "#fff",
-              border: "none",
-              padding: "10px 20px",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            Cadastrar
-          </button>
+          {produtoEditando && (
+            <button
+              onClick={cancelarEdicao}
+              style={{
+                backgroundColor: "#dc3545",
+                color: "#fff",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Cancelar
+            </button>
+          )}
         </div>
 
         {/* Produtos Adicionados */}
@@ -174,84 +249,114 @@ const GerenciarProdutos = () => {
                 <th>Quantidade</th>
                 <th>Unidade</th>
                 <th>Detalhes</th>
-                <th>Data</th> {/* Nova coluna */}
+                <th>Data</th>  
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {adicionados.map((produto, index) => (
-                <tr key={index}>
-                  <td>{produto.nome}</td>
-                  <td>{produto.quantidade}</td>
-                  <td>{produto.unidade}</td>
-                  <td>{produto.detalhes}</td>
-                  <td>{produto.data}</td> {/* Exibe a data */}
-                  <td>
-                    <button
-                      onClick={() => excluirProduto(index, true)}
-                      style={{
-                        backgroundColor: "red",
-                        color: "#fff",
-                        border: "none",
-                        padding: "5px 10px",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Excluir
-                    </button>
-                  </td>
-                </tr>
-              ))}
+            {Array.isArray(adicionados) && adicionados.map((produto, index) => (
+              <tr key={produto.id || index}>  {/* Usa o índice como fallback, caso o id não esteja presente */}
+                <td>{produto.nome}</td>
+                <td>{produto.quantidade}</td>
+                <td>{produto.unidade}</td>
+                <td>{produto.detalhes}</td>
+                <td>{produto.data}</td>
+                <td>
+                  <button
+                    onClick={() => excluirProduto(produto.id, true)}  
+                    style={{
+                      backgroundColor: "red",
+                      color: "#fff",
+                      border: "none",
+                      padding: "5px 10px",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    Excluir
+                  </button>
+                </td>
+              </tr>
+            ))}
             </tbody>
           </table>
-
-          {/* Produtos Cadastrados */}
-          <h3>Produtos Cadastrados</h3>
-          <table
+          <button
+            onClick={cadastrarProdutos}
             style={{
-              width: "100%",
-              borderCollapse: "collapse",
+              backgroundColor: "#28a745",
+              color: "#fff",
+              border: "none",
+              padding: "10px 20px",
+              borderRadius: "5px",
+              cursor: "pointer",
             }}
           >
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Quantidade</th>
-                <th>Unidade</th>
-                <th>Detalhes</th>
-                <th>Data</th> {/* Nova coluna */}
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cadastrados.map((produto, index) => (
-                <tr key={index}>
-                  <td>{produto.nome}</td>
-                  <td>{produto.quantidade}</td>
-                  <td>{produto.unidade}</td>
-                  <td>{produto.detalhes}</td>
-                  <td>{produto.data}</td> {/* Exibe a data */}
-                  <td>
-                    <button
-                      onClick={() => excluirProduto(index, false)}
-                      style={{
-                        backgroundColor: "red",
-                        color: "#fff",
-                        border: "none",
-                        padding: "5px 10px",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Excluir
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            Cadastrar Produtos
+          </button>
         </div>
+      </div>
+
+      {/* Produtos Cadastrados */}
+      <div style={{ marginTop: "30px" }}>
+        <h3>Produtos Cadastrados</h3>
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginBottom: "20px",
+          }}
+        >
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Quantidade</th>
+              <th>Unidade</th>
+              <th>Detalhes</th>
+              <th>Data</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+          {Array.isArray(cadastrados) && cadastrados.map((produto, index) => (
+          <tr  key={produto.id || index}>
+            <td>{produto.nome}</td>
+            <td>{produto.quantidade}</td>
+            <td>{produto.unidade}</td>
+            <td>{produto.detalhes}</td>
+            <td>{produto.data}</td>
+            <td>
+              <button
+                onClick={() => editarProduto(produto)}
+                style={{
+                  backgroundColor: "#ffc107",
+                  color: "#fff",
+                  border: "none",
+                  padding: "5px 10px",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                Editar
+              </button>
+              <button
+                onClick={() => excluirProduto(index, false)}
+                style={{
+                  backgroundColor: "red",
+                  color: "#fff",
+                  border: "none",
+                  padding: "5px 10px",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  marginLeft: "10px",
+                }}
+              >
+                Excluir
+              </button>
+            </td>
+          </tr>
+        ))}
+
+          </tbody>
+        </table>
       </div>
     </div>
   );

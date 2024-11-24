@@ -1,8 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import campanhaRoutes from './Routes/CampanhaRoutes.js'; 
-
-
+import produtos from './Routes/ProdutoRoutes.js'; 
 
 const app = express();
 const port = 3002;
@@ -12,7 +10,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(campanhaRoutes)
+app.use(produtos)
 
 app.listen(port, () => {
     console.log(`Rodando na porta ${port}`)
