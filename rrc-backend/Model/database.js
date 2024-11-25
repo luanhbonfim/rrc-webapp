@@ -18,7 +18,7 @@ class DataBase {
             return { rows, affectedRows: rows.affectedRows };
         } catch (e) {
             console.log("Erro no Banco", e);
-            throw e; // Repassa o erro para o controlador tratar
+            throw e; 
         } finally {
             connection.release();
         }

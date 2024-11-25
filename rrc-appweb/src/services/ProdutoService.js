@@ -17,17 +17,15 @@ class ProdutoService {
   
   async adicionarProduto(produto) {
     try {
-      console.log('Produto enviado:', produto);  // Verifique os dados do produto
+      console.log('Produto enviado:', produto);
   
       const response = await fetch(`${API_BASE_URL}/gerenciar-tipos-produtos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(produto[0]),  // Envie o primeiro item do array (objeto)
+        body: JSON.stringify(produto[0]),  
       });
-  
-      console.log('Status da resposta:', response.status);
   
       if (!response.ok) {
         const errorData = await response.text();
@@ -35,7 +33,10 @@ class ProdutoService {
         throw new Error('Erro ao adicionar produto');
       }
   
-      return await response.json();
+      const produtoCadastrado = await response.json(); 
+      console.log('Produto com ID retornado:', produtoCadastrado);
+      window.location.reload();
+      return produtoCadastrado;
     } catch (error) {
       console.error('Erro:', error);
       throw error;
@@ -43,8 +44,11 @@ class ProdutoService {
   }
   
   
-
   async atualizarProduto(id, produto) {
+    if (!id) {
+      throw new Error("Produto deve ter um ID para ser atualizado.");
+    }
+
     const response = await fetch(`${API_BASE_URL}/gerenciar-tipos-produtos/${id}`, {
       method: 'PUT',
       headers: {
@@ -54,8 +58,11 @@ class ProdutoService {
     });
 
     if (!response.ok) {
-      throw new Error('Erro ao atualizar produto');
+      const errorDetails = await response.json().catch(() => null);  
+      console.error("Erro ao atualizar produto:", response.status, errorDetails || "Nenhum detalhe disponível");
+      throw new Error(`Erro | response | ${response.status}`);
     }
+    
 
     return await response.json();
   }

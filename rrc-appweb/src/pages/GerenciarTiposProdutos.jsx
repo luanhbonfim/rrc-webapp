@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ProdutoService from "../services/ProdutoService.js"; // Importando o serviço
+import ProdutoService from "../services/ProdutoService.js"; 
 import "./GerenciarTiposProdutos.css";  
 
 const produtoService = new ProdutoService();
@@ -13,19 +13,21 @@ const GerenciarProdutos = () => {
   const [adicionados, setAdicionados] = useState([]);
   const [cadastrados, setCadastrados] = useState([]);
   const [erros, setErros] = useState({ nome: false, quantidade: false });
-  const [produtoEditando, setProdutoEditando] = useState(null); // Para editar um produto
+  const [produtoEditando, setProdutoEditando] = useState(null);  
 
-  // Função para carregar os produtos cadastrados do banco de dados
+ 
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
         const data = await produtoService.getAllProdutos();
         console.log("Produtos recebidos da API:", data);
-        setCadastrados(data.rows || []); // Atualiza o estado com os produtos da propriedade 'rows'
+        console.log("Estrutura de dados:", data.rows);  
+        setCadastrados(data.rows || []);
       } catch (error) {
         console.error("Erro ao carregar produtos cadastrados", error);
       }
     };
+    
   
     fetchProdutos();
   }, []);
@@ -39,6 +41,7 @@ const GerenciarProdutos = () => {
       });
       return;
     }
+    
     const dataAtual = new Date();
     const dataFormatada = `${dataAtual.getFullYear()}-${(dataAtual.getMonth() + 1).toString().padStart(2, "0")}-${dataAtual.getDate().toString().padStart(2, "0")} ${dataAtual.getHours().toString().padStart(2, "0")}:${dataAtual.getMinutes().toString().padStart(2, "0")}:${dataAtual.getSeconds().toString().padStart(2, "0")}`;
     
@@ -68,7 +71,7 @@ const GerenciarProdutos = () => {
     if (isAdicionado) {
       setAdicionados(adicionados.filter((_, i) => i !== index));
     } else {
-      produtoService.excluirProduto(cadastrados[index].id)  // Usando id para deletar
+      produtoService.excluirProduto(cadastrados[index].id) 
         .then(() => {
           setCadastrados(cadastrados.filter((_, i) => i !== index));
         })
@@ -79,12 +82,15 @@ const GerenciarProdutos = () => {
   };
 
   const editarProduto = (produto) => {
+    console.log("Produto para edição:", produto);  
+    console.log("Produto ID:", produto.id); 
     setProdutoEditando(produto);
     setNome(produto.nome);
     setQuantidade(produto.quantidade);
     setUnidade(produto.unidade);
     setDetalhes(produto.detalhes);
   };
+  
 
   const salvarEdicao = () => {
     if (!nome || !quantidade) {
@@ -94,6 +100,8 @@ const GerenciarProdutos = () => {
       });
       return;
     }
+  
+    console.log("ID DO PRODUTO", produtoEditando.id);
     produtoService.atualizarProduto(produtoEditando.id, { nome, quantidade, unidade, detalhes })
       .then(() => {
         const produtosAtualizados = cadastrados.map((produto) =>
