@@ -35,7 +35,7 @@ class ProdutoService {
   
       const produtoCadastrado = await response.json(); 
       console.log('Produto com ID retornado:', produtoCadastrado);
-      //window.location.reload();
+      window.location.reload();
       return produtoCadastrado;
     } catch (error) {
       console.error('Erro:', error);
