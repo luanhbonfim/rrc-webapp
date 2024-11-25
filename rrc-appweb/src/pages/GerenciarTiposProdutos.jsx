@@ -16,23 +16,47 @@ const GerenciarProdutos = () => {
   const [produtoEditando, setProdutoEditando] = useState(null);  
 
  
+  // useEffect(() => {
+  //   const fetchProdutos = async () => {
+  //     try {
+  //       const data = await produtoService.getAllProdutos();
+  //       console.log("Produtos recebidos da API:", data);
+  //       console.log("Estrutura de dados:", data.rows);  
+  //       setCadastrados(data.rows || []);
+  //     } catch (error) {
+  //       console.error("Erro ao carregar produtos cadastrados", error);
+  //     }
+  //   };
+    
+  
+  //   fetchProdutos();
+  // }, []);
+  
+  
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
         const data = await produtoService.getAllProdutos();
+        
         console.log("Produtos recebidos da API:", data);
-        console.log("Estrutura de dados:", data.rows);  
-        setCadastrados(data.rows || []);
+        
+        if (data && data.rows) {
+          data.rows.forEach((produto, index) => {
+            console.log(`Produto ${index + 1}:`, produto);
+            console.log(`Data formatada: ${new Date(produto.data).toLocaleString()}`);
+          });
+          setCadastrados(data.rows);
+        } else {
+          console.log("Nenhum produto encontrado ou estrutura de dados inválida.");
+        }
       } catch (error) {
-        console.error("Erro ao carregar produtos cadastrados", error);
+        console.error("Erro ao carregar produtos cadastrados:", error);
       }
     };
-    
   
     fetchProdutos();
   }, []);
-  
-  
+
   
   const adicionarProduto = () => {
     if (!nome || !quantidade) {
@@ -379,7 +403,7 @@ const GerenciarProdutos = () => {
             <td>{produto.quantidade}</td>
             <td>{produto.unidade}</td>
             <td>{produto.detalhes}</td>
-            <td>{produto.data}</td>
+            <td>{new Date(produto.data).toLocaleString()}</td> 
             <td>
               <button
                 onClick={() => editarProduto(produto)}
@@ -411,7 +435,6 @@ const GerenciarProdutos = () => {
             </td>
           </tr>
         ))}
-
           </tbody>
         </table>
       </div>

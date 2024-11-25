@@ -38,7 +38,7 @@ class ProdutoController {
 
     async excluirProduto(req, res) {
         try {
-          const id = parseInt(req.params.id); // Converta para inteiro
+          const id = parseInt(req.params.id); 
           console.log('Tentando excluir produto com ID:', id);
       
           if (!id) {
@@ -61,14 +61,16 @@ class ProdutoController {
     
       async atualizarProduto(req, res) {
         try {
-          const id = parseInt(req.params.id); // Converta para inteiro
+          const id = parseInt(req.params.id); 
           const { nome, quantidade, unidade, detalhes, data } = req.body;
       
           if (!nome || !quantidade || !unidade) {
             return res.status(400).json({ error: "Campos obrigatórios faltando" });
           }
       
-          const produtoExistente = await this.tipoProduto.obterTodos();
+          const produtoExistente = (await this.tipoProduto.obterTodos()).rows;
+          console.log("produtoExistente", produtoExistente); 
+      
           const produto = produtoExistente.find((produto) => produto.id === id);
       
           if (!produto) {
@@ -88,6 +90,7 @@ class ProdutoController {
           res.status(500).json({ error: "Erro ao atualizar produto: " + error.message });
         }
       }
+      
       
     
     
