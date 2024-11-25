@@ -143,8 +143,14 @@ const GerenciarProdutos = () => {
       return;
     }
   
-    const dataAtualizada = new Date().toISOString().replace('T', ' ').split('.')[0];
-  
+    const agora = new Date();
+    const deslocamento = agora.getTimezoneOffset() * 60000; // Offset em milissegundos
+    const dataAtualizada = new Date(agora.getTime() - deslocamento)
+      .toISOString()
+      .replace('T', ' ')
+      .split('.')[0];
+    
+
     produtoService.atualizarProduto(produtoEditando.id, { nome, quantidade, unidade, detalhes, data: dataAtualizada })
       .then(() => {
         const produtosAtualizados = cadastrados.map((produto) =>
