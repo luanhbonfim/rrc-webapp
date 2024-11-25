@@ -14,13 +14,13 @@ class TipoProduto {
 
     async obterTodos() {
         try {
-            const result = await database.ExecutaComando('SELECT * FROM PRODUTOS');
-            return result;  
+          const result = await database.ExecutaComando('SELECT * FROM PRODUTOS');
+          return result; 
         } catch (err) {
-            throw new Error('Erro ao obter produtos: ' + err.message);
+          throw new Error('Erro ao obter produtos: ' + err.message);
         }
-    }
-    
+      }
+      
 
     async excluir(id) {
         try {
@@ -65,7 +65,6 @@ class TipoProduto {
         const { id, nome, quantidade, unidade, detalhes, data } = tipoProduto;
     
         try {
-         
             console.log('Atualizando produto:', { id, nome, quantidade, unidade, detalhes, data });
     
             const result = await database.ExecutaComando(

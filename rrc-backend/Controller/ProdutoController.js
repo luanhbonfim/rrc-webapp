@@ -38,59 +38,57 @@ class ProdutoController {
 
     async excluirProduto(req, res) {
         try {
-            const id = req.params.id;
-            if (!id) {
-                return res.status(400).json({ error: "ID do produto não fornecido" });
-            }
-    
-            const result = await this.tipoProduto.excluir(id);
-    
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ error: "Produto não encontrado" });
-            }
-    
-            res.status(200).json({ message: "Produto excluído com sucesso!" });
+          const id = parseInt(req.params.id); // Converta para inteiro
+          console.log('Tentando excluir produto com ID:', id);
+      
+          if (!id) {
+            return res.status(400).json({ error: "ID do produto não fornecido" });
+          }
+      
+          const result = await this.tipoProduto.excluir(id);
+      
+          if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Produto não encontrado" });
+          }
+      
+          res.status(200).json({ message: "Produto excluído com sucesso!" });
         } catch (error) {
-            console.error('Erro ao excluir produto:', error);
-            res.status(500).json({ error: "Erro ao excluir produto: " + error.message });
+          console.error('Erro ao excluir produto:', error);
+          res.status(500).json({ error: "Erro ao excluir produto: " + error.message });
         }
-    }
+      }
+      
     
-    async atualizarProduto(req, res) {
+      async atualizarProduto(req, res) {
         try {
-            const id = req.params.id;
-            const { nome, quantidade, unidade, detalhes, data } = req.body;
-
-            console.log("Nome: ", nome);
-            console.log("quantidade: ", quantidade);
-            console.log("unidade: ", unidade);
-            console.log("Data: ", data);
-
-            if (!nome || !quantidade || !unidade) {
-                return res.status(400).json({ error: "Campos obrigatórios faltando" });
-            }
-    
-            const produtoExistente = await this.tipoProduto.obterTodos();
-            console.log('Produto Existente:', produtoExistente);  
-            const produto = produtoExistente.rows.find((produto) => produto.id === parseInt(id));
-    
-            if (!produto) {
-                return res.status(404).json({ error: "Produto não encontrado" });
-            }
-    
-            const novoProduto = new TipoProduto(id, nome, quantidade, unidade, detalhes, data);
-            const result = await this.tipoProduto.atualizar(novoProduto);
-    
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ error: "Produto não encontrado para atualizar" });
-            }
-    
-            res.status(200).json({ message: "Produto atualizado com sucesso!" });
+          const id = parseInt(req.params.id); // Converta para inteiro
+          const { nome, quantidade, unidade, detalhes, data } = req.body;
+      
+          if (!nome || !quantidade || !unidade) {
+            return res.status(400).json({ error: "Campos obrigatórios faltando" });
+          }
+      
+          const produtoExistente = await this.tipoProduto.obterTodos();
+          const produto = produtoExistente.find((produto) => produto.id === id);
+      
+          if (!produto) {
+            return res.status(404).json({ error: "Produto não encontrado" });
+          }
+      
+          const novoProduto = { id, nome, quantidade, unidade, detalhes, data };
+          const result = await this.tipoProduto.atualizar(novoProduto);
+      
+          if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Produto não encontrado para atualizar" });
+          }
+      
+          res.status(200).json({ message: "Produto atualizado com sucesso!" });
         } catch (error) {
-            console.error('Erro ao atualizar produto:', error);
-            res.status(500).json({ error: "Erro ao atualizar produto: " + error.message });
+          console.error('Erro ao atualizar produto:', error);
+          res.status(500).json({ error: "Erro ao atualizar produto: " + error.message });
         }
-    }
+      }
+      
     
     
 }

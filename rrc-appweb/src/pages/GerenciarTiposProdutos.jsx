@@ -32,7 +32,8 @@ const GerenciarProdutos = () => {
     fetchProdutos();
   }, []);
   
-
+  
+  
   const adicionarProduto = () => {
     if (!nome || !quantidade) {
       setErros({
@@ -41,14 +42,21 @@ const GerenciarProdutos = () => {
       });
       return;
     }
-    
+  
     const dataAtual = new Date();
     const dataFormatada = `${dataAtual.getFullYear()}-${(dataAtual.getMonth() + 1).toString().padStart(2, "0")}-${dataAtual.getDate().toString().padStart(2, "0")} ${dataAtual.getHours().toString().padStart(2, "0")}:${dataAtual.getMinutes().toString().padStart(2, "0")}:${dataAtual.getSeconds().toString().padStart(2, "0")}`;
-    
-    setAdicionados([
-      ...adicionados,
-      { nome, quantidade, unidade, detalhes: detalhes || "Nenhum detalhe", data: dataFormatada },
-    ]);
+  
+    const novoProduto = {
+      nome,
+      quantidade,
+      unidade,
+      detalhes: detalhes || "Nenhum detalhe",
+      data: dataFormatada,
+    };
+  
+  
+    setAdicionados(prevAdicionados => [...prevAdicionados, novoProduto]);
+  
     setNome("");
     setQuantidade("");
     setDetalhes("");
@@ -57,16 +65,26 @@ const GerenciarProdutos = () => {
   };
 
   const cadastrarProdutos = () => {
-    produtoService.adicionarProduto(adicionados)
-      .then(() => {
-        setCadastrados([...cadastrados, ...adicionados]);
-        setAdicionados([]);
-      })
-      .catch((error) => {
-        console.error("Erro ao cadastrar produtos", error);
-      });
-  };
+    const produtosParaCadastrar = [...adicionados];
 
+    produtosParaCadastrar.forEach((produto, index) => {
+      produtoService.adicionarProduto([produto]) 
+        .then(() => {
+          setCadastrados(prevCadastrados => [...prevCadastrados, produto]);
+          
+       
+          setAdicionados(prevAdicionados => prevAdicionados.filter((_, i) => i !== index));
+        })
+        .catch((error) => {
+          console.error("Erro ao cadastrar produto", error);  
+        });
+    });
+  };
+  
+  const excluirProdutoAdicionado = (index) => {
+    setAdicionados(adicionados.filter((_, i) => i !== index));
+  };
+  
   const excluirProduto = (index, isAdicionado) => {
     if (isAdicionado) {
       setAdicionados(adicionados.filter((_, i) => i !== index));
@@ -101,12 +119,13 @@ const GerenciarProdutos = () => {
       return;
     }
   
-    console.log("ID DO PRODUTO", produtoEditando.id);
-    produtoService.atualizarProduto(produtoEditando.id, { nome, quantidade, unidade, detalhes })
+    const dataAtualizada = new Date().toISOString().replace('T', ' ').split('.')[0];
+  
+    produtoService.atualizarProduto(produtoEditando.id, { nome, quantidade, unidade, detalhes, data: dataAtualizada })
       .then(() => {
         const produtosAtualizados = cadastrados.map((produto) =>
           produto.id === produtoEditando.id
-            ? { ...produto, nome, quantidade, unidade, detalhes }
+            ? { ...produto, nome, quantidade, unidade, detalhes, data: dataAtualizada }
             : produto
         );
         setCadastrados(produtosAtualizados);
@@ -116,6 +135,32 @@ const GerenciarProdutos = () => {
         console.error("Erro ao atualizar produto", error);
       });
   };
+
+  
+  // const salvarEdicao = () => {
+  //   if (!nome || !quantidade) {
+  //     setErros({
+  //       nome: !nome,
+  //       quantidade: !quantidade,
+  //     });
+  //     return;
+  //   }
+  
+  //   console.log("ID DO PRODUTO", produtoEditando.id);
+  //   produtoService.atualizarProduto(produtoEditando.id, { nome, quantidade, unidade, detalhes })
+  //     .then(() => {
+  //       const produtosAtualizados = cadastrados.map((produto) =>
+  //         produto.id === produtoEditando.id
+  //           ? { ...produto, nome, quantidade, unidade, detalhes }
+  //           : produto
+  //       );
+  //       setCadastrados(produtosAtualizados);
+  //       cancelarEdicao();
+  //     })
+  //     .catch((error) => {
+  //       console.error("Erro ao atualizar produto", error);
+  //     });
+  // };
 
   const cancelarEdicao = () => {
     setProdutoEditando(null);
@@ -267,7 +312,7 @@ const GerenciarProdutos = () => {
             </thead>
             <tbody>
             {Array.isArray(adicionados) && adicionados.map((produto, index) => (
-              <tr key={produto.id || index}>  {/* Usa o índice como fallback, caso o id não esteja presente */}
+              <tr key={produto.id || index}>   
                 <td>{produto.nome}</td>
                 <td>{produto.quantidade}</td>
                 <td>{produto.unidade}</td>
@@ -275,7 +320,7 @@ const GerenciarProdutos = () => {
                 <td>{produto.data}</td>
                 <td>
                   <button
-                    onClick={() => excluirProduto(produto.id, true)}  
+                    onClick={() => excluirProdutoAdicionado(index)}  
                     style={{
                       backgroundColor: "red",
                       color: "#fff",
