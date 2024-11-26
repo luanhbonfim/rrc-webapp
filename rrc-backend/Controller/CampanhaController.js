@@ -3,6 +3,7 @@ import Campanha from "../Model/Entidades/Campanha.js";
 const campanha = new Campanha();
 
 class CampanhaController {
+    // Obter todas as campanhas
     async obterTodos(req, res) {
         try {
             const lista = await campanha.obterTodos();
@@ -13,38 +14,60 @@ class CampanhaController {
         }
     }
 
+    // Adicionar uma nova campanha
     async adicionar(req, res) {
         const { nome, local, descricao, dataInicio, dataFim } = req.body;
 
         try {
             const campanhaData = { nome, local, descricao, dataInicio, dataFim };
-            const result = await campanha.insert(campanhaData); 
+            const result = await campanha.insert(campanhaData);
 
             if (result.affectedRows > 0) {
-                return res.status(201).json({ message: 'Campanha cadastrada com sucesso!' });
+                return res.status(201).json({ mensagem: 'Campanha cadastrada com sucesso!' });
             } else {
-                return res.status(400).json({ message: 'Erro ao cadastrar campanha.' });
+                return res.status(400).json({ mensagem: 'Erro ao cadastrar campanha.' });
             }
         } catch (err) {
             console.error('Erro ao cadastrar campanha:', err);
-            return res.status(500).json({ message: 'Erro interno ao cadastrar campanha.' });
+            return res.status(500).json({ mensagem: 'Erro interno ao cadastrar campanha.' });
         }
     }
 
+    // Atualizar uma campanha existente
+    async editar(req, res) {
+        const { id } = req.params;
+        const { nome, local, descricao, dataInicio, dataFim } = req.body;
+    
+        try {
+            const campanhaData = { nome, local, descricao, dataInicio, dataFim };
+            const result = await campanha.update(id, campanhaData);
+    
+            if (result.affectedRows > 0) {
+                return res.status(200).json({ mensagem: 'Campanha atualizada com sucesso!' });
+            } else {
+                return res.status(404).json({ mensagem: 'Campanha não encontrada.' });
+            }
+        } catch (err) {
+            console.error('Erro ao editar campanha:', err);
+            return res.status(500).json({ mensagem: 'Erro ao editar campanha.' });
+        }
+    }
+
+    // Excluir uma campanha
     async excluir(req, res) {
-        const { id } = req.params; 
+        const { id } = req.params;
 
         try {
-            const { affectedRows } = await campanha.excluir(id); 
+            const result = await campanha.excluir(id);
 
-            if (affectedRows > 0) {
-                return res.status(200).json({ message: 'Campanha excluída com sucesso.' });
+            if (result.affectedRows > 0) {
+                return res.status(200).json({ mensagem: 'Campanha excluída com sucesso.' });
             } else {
-                return res.status(404).json({ message: 'Campanha não encontrada.' });
+                return res.status(404).json({ mensagem: 'Campanha não encontrada.' });
             }
-        } catch (error) {
-            console.error('Erro ao excluir campanha:', error);
-            return res.status(500).json({ message: 'Erro ao excluir campanha.' });
+        } catch (erro) {
+            console.error('Erro ao excluir campanha:', erro);
+            return res.status(500).json({ mensagem: 'Erro ao excluir campanha.' });
         }
     }
 }

@@ -6,7 +6,7 @@ class DataBase {
             host: 'localhost',
             user: 'root',   
             password: '',   
-            database: 'pid',  
+            database: 'rotaract_db',  
         });
     }
 

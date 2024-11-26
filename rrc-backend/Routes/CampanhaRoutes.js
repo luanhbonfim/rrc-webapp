@@ -13,4 +13,6 @@ router.post('/campanha', campanhaController.adicionar.bind(campanhaController));
 // Excluir uma campanha pelo ID
 router.delete('/campanhas/:id', campanhaController.excluir.bind(campanhaController));
 
+router.put('/campanhas/:id', campanhaController.editar);
+
 export default router;

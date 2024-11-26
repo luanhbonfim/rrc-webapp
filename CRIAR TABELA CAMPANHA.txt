@@ -1,0 +1,8 @@
+CREATE TABLE CAMPANHA (
+    c_id INT AUTO_INCREMENT PRIMARY KEY,
+    c_nome VARCHAR(100),
+    c_local VARCHAR(150)
+    c_desc VARCHAR(255),
+    c_data_inicio DATETIME,
+    c_data_fim DATETIME
+);

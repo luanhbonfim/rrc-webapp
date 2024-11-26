@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 export default function CardsAtalho() {
     return (
         <>
-            <h1 className="atalho">Atalhos</h1>
-
             <div className="cards">
                 <div className="card">
                     <Link to="/campanha">
