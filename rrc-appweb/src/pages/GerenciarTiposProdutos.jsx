@@ -14,7 +14,9 @@ const GerenciarProdutos = () => {
   const [produtoEditando, setProdutoEditando] = useState(null);
   const [filtroNome, setFiltroNome] = useState(""); 
   const [adicionados, setAdicionados] = useState([]);
+  const [orderBy, setOrderBy] = useState('asc');
   
+
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
@@ -168,6 +170,24 @@ const GerenciarProdutos = () => {
       });
   };
 
+  const handleSort = (property) => {
+    const novoOrderBy = orderBy === 'asc' ? 'desc' : 'asc';
+    setOrderBy(novoOrderBy); 
+  
+    setCadastrados((prevCadastrados) => {
+      const produtosOrdenados = [...prevCadastrados].sort((a, b) => {
+        const aValue = a[property] || ''; 
+        const bValue = b[property] || '';  
+  
+        return novoOrderBy === 'asc'
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      });
+  
+      return produtosOrdenados;
+    });
+  };
+  
   const cancelarEdicao = () => {
     setProdutoEditando(null);
     setNome("");
@@ -177,10 +197,35 @@ const GerenciarProdutos = () => {
     setErros({ nome: false, quantidade: false });
   };
 
-  const produtosFiltrados = cadastrados
-    .filter((produto) => produto.nome.toLowerCase().includes(filtroNome.toLowerCase()))
-    .sort((a, b) => a.nome.localeCompare(b.nome)); 
+  // const produtosFiltrados = cadastrados
+  // .filter((produto) => {
+  //   const nomeNormalizado = produto.nome.trim().toLowerCase();
+  //   const filtroNormalizado = filtroNome.trim().toLowerCase();
 
+  //    
+  //   const regex = new RegExp(filtroNormalizado, 'i');
+  //   return nomeNormalizado.match(regex);
+  // })
+  // .sort((a, b) => a.nome.localeCompare(b.nome));
+
+  const produtosFiltrados = cadastrados
+  .filter((produto) => {
+    const nomeNormalizado = produto.nome.trim().toLowerCase();
+    const filtroNormalizado = filtroNome.trim().toLowerCase();
+    const regex = new RegExp(filtroNormalizado, 'i');
+    return nomeNormalizado.match(regex);
+  });
+
+    
+  const produtosOrdenados = produtosFiltrados.sort((a, b) => {
+    const aValue = a.nome || '';  
+    const bValue = b.nome || '';   
+ 
+    return orderBy === 'asc' 
+      ? aValue.localeCompare(bValue)
+      : bValue.localeCompare(aValue);
+  });
+  
   return (
     <div style={{ padding: "20px", fontFamily: "Arial", textAlign: "center" }}>
       <h2 style={{ fontWeight: "bold", marginBottom: "20px" }}>Gerenciar Produtos</h2>
@@ -352,7 +397,7 @@ const GerenciarProdutos = () => {
         >
           <thead>
             <tr>
-              <th>Produto</th>
+            <th onClick={() => handleSort('nome')} style={{ cursor: 'pointer' }}>Produto</th>
               <th>Quantidade</th>
               <th>Unidade</th>
               <th>Detalhes</th>
@@ -362,8 +407,8 @@ const GerenciarProdutos = () => {
             </tr>
           </thead>
           <tbody>
-            {produtosFiltrados.map((produto, index) => (
-              <tr key={index}>
+            {produtosOrdenados.map((produto, index) => (
+           <tr key={produto.id}>
                 <td>{produto.nome}</td>
                 <td>{produto.quantidade}</td>
                 <td>{produto.unidade}</td>
