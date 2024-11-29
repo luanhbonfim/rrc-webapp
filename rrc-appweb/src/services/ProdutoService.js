@@ -34,7 +34,7 @@ class ProdutoService {
       }
   
       const produtoCadastrado = await response.json(); 
-      console.log('Produto com ID retornado:', produtoCadastrado);
+      console.log('Produto com ID retornado:', produtoCadastrado.id);
       window.location.reload();
       return produtoCadastrado;
     } catch (error) {
@@ -79,7 +79,7 @@ class ProdutoService {
       throw new Error('Erro ao excluir produto');
     }
     
-    window.location.reload();
+    //window.location.reload();
     return await response.json();
   }
 }
