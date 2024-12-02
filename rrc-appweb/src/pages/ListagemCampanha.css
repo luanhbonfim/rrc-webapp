@@ -1,4 +1,3 @@
-
 .listagem-campanha-container {
   width: 80%;
   margin: 0 auto;
@@ -16,13 +15,11 @@
   font-weight: bold;
 }
 
-
 .listagem-campanha-ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-
 
 .listagem-campanha-li {
   background-color: #fff;
@@ -49,8 +46,8 @@
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.3s;
+  margin-left: 5px;  
 }
-
 
 .listagem-campanha-btn-editar {
   background-color: #4CAF50;
@@ -128,7 +125,6 @@
   margin-top: 10px;
 }
 
-
 .listagem-campanha-btn-salvar {
   background-color: #007BFF;
 }
@@ -136,7 +132,6 @@
 .listagem-campanha-btn-salvar:hover {
   background-color: #0056b3;
 }
-
 
 .listagem-campanha-btn-cancelar {
   background-color: #6c757d;
@@ -179,3 +174,24 @@
   z-index: 1001;
 }
 
+.ordenar-botoes {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px; 
+}
+
+.ordenar-botao {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-right: 10px; 
+  transition: background-color 0.3s;
+}
+
+.ordenar-botao:hover {
+  background-color: #0056b3;
+}

@@ -179,8 +179,10 @@ export default function ListagemCampanha() {
                 <>
                   <strong>{campanha.c_nome}</strong>
                   <span>{formatarData(campanha.c_data_inicio)} - {formatarData(campanha.c_data_fim)}</span>
-                  <button onClick={() => iniciarEdicao(campanha)} className="listagem-campanha-btn-editar">Editar</button>
-                  <button onClick={() => abrirModalExcluir(campanha)} className="listagem-campanha-btn-excluir">Excluir</button>
+                  <div className="botao-container">
+                    <button onClick={() => iniciarEdicao(campanha)} className="listagem-campanha-btn-editar">Editar</button>
+                    <button onClick={() => abrirModalExcluir(campanha)} className="listagem-campanha-btn-excluir">Excluir</button>
+                  </div>
                 </>
               )}
             </li>
