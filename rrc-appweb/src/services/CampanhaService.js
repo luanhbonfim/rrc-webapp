@@ -19,7 +19,7 @@ class CampanhaService {
 
   // Excluir uma campanha pelo ID
   async excluirCampanha(id) {
-    const response = await fetch(`${API_BASE_URL}/campanhas/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/campanha/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -33,7 +33,7 @@ class CampanhaService {
 
   // Adicionar uma nova campanha
   async adicionarCampanha(campanha) {
-    const response = await fetch(`${API_BASE_URL}/campanhas`, {
+    const response = await fetch(`${API_BASE_URL}/campanha`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ class CampanhaService {
 
   // Editar uma campanha existente
   async editarCampanha(id, campanha) {
-    const response = await fetch(`${API_BASE_URL}/campanhas/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/campanha/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(campanha),

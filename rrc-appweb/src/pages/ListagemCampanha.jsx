@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import './ListagemCampanha.css';
 import CampanhaService from '../services/CampanhaService.js';
-import InputMask from 'react-input-mask';
 
 const campanhaService = new CampanhaService();
 
-// Função para formatar as datas
 const formatarData = (dataISO) => {
   const data = new Date(dataISO);
   if (data instanceof Date && !isNaN(data)) {
     return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' }).format(data);
   }
-  return ''; // Retorna uma string vazia se a data for inválida
+  return '';
 };
 
-// Função para converter data para o formato YYYY-MM-DD
 const formatarDataParaInput = (dataISO) => {
   const data = new Date(dataISO);
   const ano = data.getFullYear();
@@ -27,16 +24,15 @@ export default function ListagemCampanha() {
   const [campanhas, setCampanhas] = useState([]);
   const [erro, setErro] = useState(null);
   const [campanhaEditando, setCampanhaEditando] = useState(null);
-  const [erroData, setErroData] = useState(null); // Erro de validação das datas
+  const [erroData, setErroData] = useState(null);
+  const [modalAberto, setModalAberto] = useState(false);
+  const [campanhaParaExcluir, setCampanhaParaExcluir] = useState(null);
 
-  // Função para carregar campanhas
   const carregarCampanhas = async () => {
     try {
       const dados = await campanhaService.obterTodasCampanhas();
-      console.log('Dados recebidos do backend:', dados);
       setCampanhas(dados.rows || []);
     } catch (e) {
-      console.error('Erro ao carregar campanhas:', e);
       setErro('Erro ao carregar campanhas. Verifique sua conexão ou a API.');
     }
   };
@@ -45,26 +41,36 @@ export default function ListagemCampanha() {
     carregarCampanhas();
   }, []);
 
-  const excluirCampanha = async (id) => {
+  const excluirCampanha = async () => {
+    if (!campanhaParaExcluir) return;
+
     try {
-      await campanhaService.excluirCampanha(id);
-      setCampanhas(campanhas.filter((campanha) => campanha.c_id !== id));
+      await campanhaService.excluirCampanha(campanhaParaExcluir.c_id);
+      setCampanhas(campanhas.filter((campanha) => campanha.c_id !== campanhaParaExcluir.c_id));
+      setModalAberto(false);
     } catch (e) {
-      console.error('Erro ao excluir campanha:', e);
       setErro('Erro ao excluir campanha. Verifique sua conexão ou a API.');
     }
+  };
+
+  const abrirModalExcluir = (campanha) => {
+    setCampanhaParaExcluir(campanha);
+    setModalAberto(true);
+  };
+
+  const fecharModalExcluir = () => {
+    setCampanhaParaExcluir(null);
+    setModalAberto(false);
   };
 
   const iniciarEdicao = (campanha) => {
     setCampanhaEditando({
       ...campanha,
-      // Convertendo as datas para o formato YYYY-MM-DD para o input de data
       c_data_inicio: formatarDataParaInput(campanha.c_data_inicio),
       c_data_fim: formatarDataParaInput(campanha.c_data_fim),
     });
   };
 
-  // Função para validar as datas
   const validarDatas = () => {
     const dataInicio = new Date(campanhaEditando.c_data_inicio);
     const dataFim = new Date(campanhaEditando.c_data_fim);
@@ -80,14 +86,12 @@ export default function ListagemCampanha() {
       return false;
     }
 
-    setErroData(null); // Limpa o erro de data
+    setErroData(null);
     return true;
   };
 
   const salvarEdicao = async () => {
-    if (!validarDatas()) {
-      return;
-    }
+    if (!validarDatas()) return;
 
     const campanhaAtualizada = {
       id: campanhaEditando.c_id,
@@ -98,16 +102,10 @@ export default function ListagemCampanha() {
       dataFim: campanhaEditando.c_data_fim,
     };
 
-    console.log('Enviando para o back-end:', campanhaAtualizada);
-
     try {
       await campanhaService.editarCampanha(campanhaEditando.c_id, campanhaAtualizada);
-      console.log('Campanha atualizada com sucesso!');
-
-      // Recarregar as campanhas do banco após salvar
       carregarCampanhas();
-
-      setCampanhaEditando(null); // Sai do modo de edição
+      setCampanhaEditando(null);
     } catch (error) {
       console.error('Erro ao atualizar campanha:', error);
     }
@@ -117,11 +115,29 @@ export default function ListagemCampanha() {
     setCampanhaEditando(null);
   };
 
+  const ordenarPorNome = () => {
+    const campanhasOrdenadas = [...campanhas].sort((a, b) => a.c_nome.localeCompare(b.c_nome));
+    setCampanhas(campanhasOrdenadas);
+  };
+
+  const ordenarPorData = () => {
+    const campanhasOrdenadas = [...campanhas].sort(
+      (a, b) => new Date(a.c_data_inicio) - new Date(b.c_data_inicio)
+    );
+    setCampanhas(campanhasOrdenadas);
+  };
+
   return (
     <div className="listagem-campanha-container">
       <h1>Lista de Campanhas</h1>
-      {erro && <p className="listagem-campanha-erro">{erro}</p>}
-      {erroData && <p className="listagem-campanha-erro">{erroData}</p>} {/* Exibindo o erro de data */}
+      {erro && <div className="erro-global">{erro}</div>}
+      {erroData && <div className="erro-global">{erroData}</div>}
+
+      <div className="ordenar-botoes">
+        <button onClick={ordenarPorNome} className="ordenar-botao">Ordenar por Nome</button>
+        <button onClick={ordenarPorData} className="ordenar-botao">Ordenar por Data Inicial</button>
+      </div>
+
       {campanhas.length === 0 ? (
         <p>Não há campanhas cadastradas.</p>
       ) : (
@@ -129,82 +145,58 @@ export default function ListagemCampanha() {
           {campanhas.map((campanha) => (
             <li key={campanha.c_id} className="listagem-campanha-li">
               {campanhaEditando?.c_id === campanha.c_id ? (
-                <form onSubmit={(e) => { e.preventDefault(); salvarEdicao(); }} className="form-edicao">
-                  <div>
-                    <label htmlFor="nome">Nome da Campanha:</label>
-                    <input
-                      id="nome"
-                      type="text"
-                      value={campanhaEditando.c_nome}
-                      onChange={(e) =>
-                        setCampanhaEditando((prev) => ({ ...prev, c_nome: e.target.value }))
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="local">Local da Campanha:</label>
-                    <input
-                      id="local"
-                      type="text"
-                      value={campanhaEditando.c_local}
-                      onChange={(e) =>
-                        setCampanhaEditando((prev) => ({ ...prev, c_local: e.target.value }))
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="descricao">Descrição:</label>
-                    <textarea
-                      id="descricao"
-                      value={campanhaEditando.c_descricao || ''}
-                      onChange={(e) =>
-                        setCampanhaEditando((prev) => ({ ...prev, c_descricao: e.target.value }))
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="data_inicio">Data de Início:</label>
-                    <input
-                      id="data_inicio"
-                      type="date"
-                      value={campanhaEditando.c_data_inicio}
-                      onChange={(e) =>
-                        setCampanhaEditando((prev) => ({ ...prev, c_data_inicio: e.target.value }))
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="data_fim">Data Final:</label>
-                    <input
-                      id="data_fim"
-                      type="date"
-                      value={campanhaEditando.c_data_fim}
-                      onChange={(e) =>
-                        setCampanhaEditando((prev) => ({ ...prev, c_data_fim: e.target.value }))
-                      }
-                    />
-                  </div>
-
-                  <button type="submit" className="listagem-campanha-btn-salvar">Salvar</button>
-                  <button type="button" onClick={cancelarEdicao} className="listagem-campanha-btn-cancelar">Cancelar</button>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    salvarEdicao();
+                  }}
+                  className="form-edicao"
+                >
+                  <input
+                    type="text"
+                    value={campanhaEditando.c_nome}
+                    onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_nome: e.target.value })}
+                    required
+                  />
+                  <input
+                    type="date"
+                    value={campanhaEditando.c_data_inicio}
+                    onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_data_inicio: e.target.value })}
+                    required
+                  />
+                  <input
+                    type="date"
+                    value={campanhaEditando.c_data_fim}
+                    onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_data_fim: e.target.value })}
+                    required
+                  />
+                  <button type="submit">Salvar</button>
+                  <button type="button" onClick={cancelarEdicao}>
+                    Cancelar
+                  </button>
                 </form>
               ) : (
                 <>
                   <strong>{campanha.c_nome}</strong>
-                  <span>{campanha.c_local}</span>
                   <span>{formatarData(campanha.c_data_inicio)} - {formatarData(campanha.c_data_fim)}</span>
-                  <span>{campanha.c_descricao || 'Sem descrição'}</span> {/* Exibindo descrição */}
                   <button onClick={() => iniciarEdicao(campanha)} className="listagem-campanha-btn-editar">Editar</button>
-                  <button onClick={() => excluirCampanha(campanha.c_id)} className="listagem-campanha-btn-excluir">Excluir</button>
+                  <button onClick={() => abrirModalExcluir(campanha)} className="listagem-campanha-btn-excluir">Excluir</button>
                 </>
               )}
             </li>
           ))}
         </ul>
+      )}
+
+      {modalAberto && (
+        <div className="modal-global">
+          <div className="modal-content">
+            <h2>Confirmar Exclusão</h2>
+            <p>Tem certeza que deseja excluir a campanha <strong>{campanhaParaExcluir?.c_nome}</strong>?</p>
+            <button onClick={excluirCampanha} className="btn-confirmar">Sim</button>
+            <button onClick={fecharModalExcluir} className="btn-cancelar">Não</button>
+          </div>
+        </div>
       )}
     </div>
   );
