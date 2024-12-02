@@ -28,11 +28,14 @@ export default function MenuHamburguer() {
                             </Link>
                             <li onClick={toggleMenu}>X</li>
                         </div>
-                        <li>Cadastrar doações</li>
-                        <li>Cadastrar associados</li>
+                      
                         <Link to="/campanha" className="link-hamburg">
                             <li>Cadastrar campanhas</li>
                         </Link>
+                        <Link to="/list-campanhas" className="link-hamburg">
+                            <li>Campanhas cadastradas</li>
+                        </Link>
+                        <li>Cadastrar associados</li>
                         <li>Cadastrar títulos</li>
                         <li>Cadastrar doações</li>
                         <Link to="/netflix-ta-cara-meus-anjos" className="link-hamburg">

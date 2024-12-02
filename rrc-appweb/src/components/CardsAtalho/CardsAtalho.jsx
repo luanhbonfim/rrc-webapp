@@ -26,10 +26,6 @@ export default function CardsAtalho() {
                 </div>
 
                 <div className="card">
-                    <h3>Cadastrar Associado</h3>
-                </div>
-
-                <div className="card">
                 <Link to="/netflix-ta-cara-meus-anjos">
                     <h3>Cadastrar Mensalidades</h3> 
                 </Link>

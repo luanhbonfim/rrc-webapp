@@ -15,7 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<CardsAtalho />} />
           <Route path="/campanha" element={<Campanha />} />
-          <Route path="/campanhas" element={<ListagemCampanha />} />
+          <Route path="/list-campanhas" element={<ListagemCampanha />} />
           <Route path="/gerenciar-tipos-produtos" element={<GerenciarProdutos />} />
           <Route path="/netflix-ta-cara-meus-anjos" element={<GerenciarMensalidades />} />
         </Routes>
