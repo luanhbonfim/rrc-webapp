@@ -35,7 +35,9 @@ export default function MenuHamburguer() {
                         </Link>
                         <li>Cadastrar títulos</li>
                         <li>Cadastrar doações</li>
-                        <li>Cadastrar mensalidades</li>
+                        <Link to="/netflix-ta-cara-meus-anjos" className="link-hamburg">
+                            <li>Cadastrar mensalidades</li>
+                        </Link>
                         <li>Cadastrar cargos</li>
                         <Link to="/gerenciar-tipos-produtos" className="link-hamburg">
                             <li>Cadastrar Produtos</li>
