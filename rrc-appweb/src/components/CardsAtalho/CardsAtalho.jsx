@@ -20,7 +20,7 @@ export default function CardsAtalho() {
                 </div>
 
                 <div className="card">
-                <Link to="/campanhas">
+                <Link to="/list-campanhas">
                     <h3>Campanhas Cadastradas</h3>
                 </Link>
                 </div>
