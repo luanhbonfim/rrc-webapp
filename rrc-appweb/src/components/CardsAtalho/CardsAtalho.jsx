@@ -30,7 +30,10 @@ export default function CardsAtalho() {
                 </div>
 
                 <div className="card">
-                    <h3>Cadastrar Doação</h3>
+                <Link to="/netflix-ta-cara-meus-anjos">
+                    <h3>Cadastrar Mensalidades</h3> 
+                </Link>
+                
                 </div>
 
                 <div className="card">

@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Campanha from './pages/Campanha';
 import ListagemCampanha from './pages/ListagemCampanha';
 import GerenciarProdutos from './pages/GerenciarTiposProdutos';
+import GerenciarMensalidades from './pages/Mensalidades';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/campanha" element={<Campanha />} />
           <Route path="/campanhas" element={<ListagemCampanha />} />
           <Route path="/gerenciar-tipos-produtos" element={<GerenciarProdutos />} />
+          <Route path="/netflix-ta-cara-meus-anjos" element={<GerenciarMensalidades />} />
         </Routes>
       </div>
     </Router>
