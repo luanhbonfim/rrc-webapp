@@ -30,7 +30,7 @@ class ProdutoController {
             const produto = new TipoProduto(null, nome, quantidade, unidade, detalhes, data);
             const produtoCadastrado = await this.tipoProduto.insert(produto);
           
-            console.log("Produto Cadastrado:", produtoCadastrado); // Verifique os dados aqui.
+            console.log("Produto Cadastrado:", produtoCadastrado); 
             res.status(201).json({ message: produtoCadastrado.message, id: produtoCadastrado.id });
         } catch (error) {
             res.status(500).json({ error: "Erro ao adicionar produto" });
