@@ -174,10 +174,13 @@ const GerenciarMensalidades = () => {
     setDescricao(mensalidade.descricao);
     setCategoria(mensalidade.categoria);
     setValor(mensalidade.valor.toString().replace('.', ',')); 
-    setDataVencimento(mensalidade.dataVencimento);
+  
+    const dataFormatada = new Date(mensalidade.dataVencimento).toISOString().split('T')[0];
+    setDataVencimento(dataFormatada);
+  
     setStatus(mensalidade.status);
   };
-
+  
   const resetarFormulario = () => {
     setDescricao('');
     setCategoria('');
@@ -277,7 +280,7 @@ const GerenciarMensalidades = () => {
               <td>{mensalidade.categoria || 'Sem categoria'}</td>
               <td>{mensalidade.descricao || 'Sem descrição'}</td>
               <td>R$ {mensalidade.valor !== undefined && mensalidade.valor !== null ? parseFloat(mensalidade.valor).toFixed(2).replace('.', ',') : '0,00'}</td>
-              <td>{ new Date(mensalidade.dataVencimento).toLocaleString() || 'Sem data'}</td>
+              <td>{ new Date(mensalidade.dataVencimento).toLocaleDateString('pt-BR') || 'Sem data'}</td>
               <td>{determinarStatus(mensalidade)}</td>
               <td>
                 <button

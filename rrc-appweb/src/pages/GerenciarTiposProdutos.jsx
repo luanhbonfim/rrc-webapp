@@ -219,8 +219,7 @@ const GerenciarProdutos = () => {
   return (
     <div style={{ padding: "20px", fontFamily: "Arial", textAlign: "center" }}>
       <h2 style={{ fontWeight: "bold", marginBottom: "20px" }}>Gerenciar Produtos</h2>
-      
-      {/* Formulário de cadastro */}
+ 
       <div
         style={{
           display: "flex",

@@ -12,7 +12,9 @@ export default function CardsAtalho() {
                 </div>
 
                 <div className="card">
+                <Link to="/associado">
                     <h3>Cadastrar Associado</h3>
+                </Link>
                 </div>
 
                 <div className="card">

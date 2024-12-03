@@ -32,7 +32,9 @@ export default function MenuHamburguer() {
                         <Link to="/campanha" className="link-hamburg">
                             <li>Cadastrar campanhas</li>
                         </Link>
-                        <li>Cadastrar associados</li>
+                        <Link to="/associado" className="link-hamburg">
+                            <li>Cadastrar associados</li>
+                        </Link>
                         <li>Cadastrar títulos</li>
                         <li>Cadastrar doações</li>
                         <Link to="/netflix-ta-cara-meus-anjos" className="link-hamburg">
