@@ -27,7 +27,7 @@ export default function CardsAtalho() {
 
                 <div className="card">
                 <Link to="/netflix-ta-cara-meus-anjos">
-                    <h3>Cadastrar Mensalidades</h3> 
+                    <h3>Cadastrar Despesas</h3> 
                 </Link>
                 
                 </div>

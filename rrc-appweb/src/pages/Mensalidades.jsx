@@ -25,7 +25,7 @@ const GerenciarMensalidades = () => {
           console.error("A resposta não contém 'rows' como um array:", dados);
         }
       } catch (error) {
-        console.error('Erro ao carregar mensalidades:', error);
+        console.error('Erro ao carregar despesas:', error);
       }
     };
     carregarMensalidades();
@@ -160,7 +160,7 @@ const GerenciarMensalidades = () => {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial', textAlign: 'center' }}>
-      <h2>Gerenciar Mensalidades</h2>
+      <h2>Cadastrar Despesas</h2>
 
       {/* Formulário */}
       <div style={{ marginBottom: '20px' }}>
