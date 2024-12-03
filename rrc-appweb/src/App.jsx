@@ -7,6 +7,8 @@ import ListagemCampanha from './pages/ListagemCampanha';
 import GerenciarProdutos from './pages/GerenciarTiposProdutos';
 import GerenciarMensalidades from './pages/Mensalidades';
 import FormAssociados from './pages/Associados';
+import Comissao from './pages/Comissao';
+
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
           <Route path="/gerenciar-tipos-produtos" element={<GerenciarProdutos />} />
           <Route path="/netflix-ta-cara-meus-anjos" element={<GerenciarMensalidades />} />
           <Route path="/associado" element={<FormAssociados />} />
+          <Route path="/comissao" element={<Comissao />} />
         </Routes>
       </div>
     </Router>

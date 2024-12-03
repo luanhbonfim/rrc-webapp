@@ -18,7 +18,9 @@ export default function CardsAtalho() {
                 </div>
 
                 <div className="card">
-                    <h3>Cadastrar Doação</h3>
+                <Link to="/comissao">
+                    <h3>Cadastrar Comissões</h3>
+                </Link>
                 </div>
 
                 <div className="card">
