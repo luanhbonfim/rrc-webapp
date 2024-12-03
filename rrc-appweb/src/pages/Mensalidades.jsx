@@ -33,7 +33,6 @@ const GerenciarMensalidades = () => {
   }, []); 
 
   useEffect(() => {
-    // Filtrar as mensalidades com base no termo de pesquisa
     const mensalidadesFiltradas = mensalidades.filter(mensalidade => 
       mensalidade.categoria.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mensalidade.descricao.toLowerCase().includes(searchTerm.toLowerCase())

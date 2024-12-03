@@ -141,53 +141,79 @@ export default function ListagemCampanha() {
       {campanhas.length === 0 ? (
         <p>Não há campanhas cadastradas.</p>
       ) : (
-        <ul className="listagem-campanha-ul">
-          {campanhas.map((campanha) => (
-            <li key={campanha.c_id} className="listagem-campanha-li">
-              {campanhaEditando?.c_id === campanha.c_id ? (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    salvarEdicao();
-                  }}
-                  className="form-edicao"
-                >
-                  <input
-                    type="text"
-                    value={campanhaEditando.c_nome}
-                    onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_nome: e.target.value })}
-                    required
-                  />
-                  <input
-                    type="date"
-                    value={campanhaEditando.c_data_inicio}
-                    onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_data_inicio: e.target.value })}
-                    required
-                  />
-                  <input
-                    type="date"
-                    value={campanhaEditando.c_data_fim}
-                    onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_data_fim: e.target.value })}
-                    required
-                  />
-                  <button type="submit">Salvar</button>
-                  <button type="button" onClick={cancelarEdicao}>
-                    Cancelar
-                  </button>
-                </form>
-              ) : (
-                <>
-                  <strong>{campanha.c_nome}</strong>
-                  <span>{formatarData(campanha.c_data_inicio)} - {formatarData(campanha.c_data_fim)}</span>
-                  <div className="botao-container">
-                    <button onClick={() => iniciarEdicao(campanha)} className="listagem-campanha-btn-editar">Editar</button>
-                    <button onClick={() => abrirModalExcluir(campanha)} className="listagem-campanha-btn-excluir">Excluir</button>
-                  </div>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
+        <table className="table-campanhas">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Descrição</th>
+              <th>Data de Início</th>
+              <th>Data de Fim</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {campanhas.map((campanha) => (
+              <tr key={campanha.c_id}>
+                {campanhaEditando?.c_id === campanha.c_id ? (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      salvarEdicao();
+                    }}
+                    className="form-edicao"
+                  >
+                    <td>
+                      <input
+                        type="text"
+                        value={campanhaEditando.c_nome}
+                        onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_nome: e.target.value })}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <textarea
+                        value={campanhaEditando.c_descricao}
+                        onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_descricao: e.target.value })}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="date"
+                        value={campanhaEditando.c_data_inicio}
+                        onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_data_inicio: e.target.value })}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="date"
+                        value={campanhaEditando.c_data_fim}
+                        onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_data_fim: e.target.value })}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <button type="submit">Salvar</button>
+                      <button type="button" onClick={cancelarEdicao}>Cancelar</button>
+                    </td>
+                  </form>
+                ) : (
+                  <>
+                    <td>{campanha.c_nome}</td>
+                    <td>{campanha.c_descricao}</td>
+                    <td>{formatarData(campanha.c_data_inicio)}</td>
+                    <td>{formatarData(campanha.c_data_fim)}</td>
+                    <td>
+                      <button onClick={() => iniciarEdicao(campanha)} className="listagem-campanha-btn-editar">Editar</button>
+                      <button onClick={() => abrirModalExcluir(campanha)} className="listagem-campanha-btn-excluir">Excluir</button>
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
 
       {modalAberto && (
