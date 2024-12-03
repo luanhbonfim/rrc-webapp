@@ -196,17 +196,7 @@ const GerenciarProdutos = () => {
     setUnidade("KG");
     setErros({ nome: false, quantidade: false });
   };
-
-  // const produtosFiltrados = cadastrados
-  // .filter((produto) => {
-  //   const nomeNormalizado = produto.nome.trim().toLowerCase();
-  //   const filtroNormalizado = filtroNome.trim().toLowerCase();
-
-  //    
-  //   const regex = new RegExp(filtroNormalizado, 'i');
-  //   return nomeNormalizado.match(regex);
-  // })
-  // .sort((a, b) => a.nome.localeCompare(b.nome));
+ 
 
   const produtosFiltrados = cadastrados
   .filter((produto) => {

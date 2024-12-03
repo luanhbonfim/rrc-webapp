@@ -71,8 +71,39 @@ const GerenciarMensalidades = () => {
     return true;
   };
 
+  const baixarPagamento = async (id) => {
+    try {
+      // Localize a mensalidade que será atualizada
+      const mensalidadeParaAtualizar = mensalidades.find((mensalidade) => mensalidade.id === id);
+  
+      if (!mensalidadeParaAtualizar) {
+        console.error('Mensalidade não encontrada');
+        return;
+      }
+  
+      // Envie todos os campos existentes, alterando apenas o status para "Pago"
+      const mensalidadeAtualizada = {
+        ...mensalidadeParaAtualizar,
+        status: 'Pago',
+      };
+  
+      const mensalidadeService = new MensalidadeService();
+      await mensalidadeService.atualizarMensalidade(id, mensalidadeAtualizada);
+  
+      // Atualize o estado local
+      setMensalidades((prevMensalidades) =>
+        prevMensalidades.map((mensalidade) =>
+          mensalidade.id === id ? { ...mensalidade, status: 'Pago' } : mensalidade
+        )
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar o status para Pago:', error);
+    }
+  };
+  
+
   const salvarMensalidade = async () => {
-    if (!descricao || !valor || !dataVencimento) {
+    if (!categoria || !valor || !dataVencimento) {
       alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
@@ -83,8 +114,8 @@ const GerenciarMensalidades = () => {
     if (!validarData(dataVencimento)) return;
   
     const novaMensalidade = {
-      descricao,
       categoria,
+      descricao: descricao || "Sem Descrição",
       valor: parseFloat(valorAjustado),
       dataVencimento,
       status,
@@ -166,16 +197,16 @@ const GerenciarMensalidades = () => {
       <div style={{ marginBottom: '20px' }}>
         <input
           type="text"
-          placeholder="Descrição *"
-          value={descricao}
-          onChange={(e) => setDescricao(e.target.value)}
-          style={{ margin: '5px', padding: '10px', width: '200px' }}
-        />
-        <input
-          type="text"
-          placeholder="Categoria"
+          placeholder="Categoria *"
           value={categoria}
           onChange={(e) => setCategoria(e.target.value)}
+          style={{ margin: '5px', padding: '10px', width: '200px' }}
+        />
+         <input
+          type="text"
+          placeholder="Descrição (Opcional)"
+          value={descricao}
+          onChange={(e) => setDescricao(e.target.value)}
           style={{ margin: '5px', padding: '10px', width: '200px' }}
         />
         <input
@@ -214,8 +245,8 @@ const GerenciarMensalidades = () => {
       <table border="1" style={{ width: '100%', marginTop: '20px', textAlign: 'left' }}>
         <thead>
           <tr>
-            <th>Descrição</th>
             <th>Categoria</th>
+            <th>Descrição</th>
             <th>Valor</th>
             <th>Data de Vencimento</th>
             <th>Status</th>
@@ -225,17 +256,23 @@ const GerenciarMensalidades = () => {
         <tbody>
           {mensalidades.map((mensalidade) => (
             <tr key={mensalidade.id}>
-              <td>{mensalidade.descricao || 'Sem descrição'}</td>
               <td>{mensalidade.categoria || 'Sem categoria'}</td>
+              <td>{mensalidade.descricao || 'Sem descrição'}</td>
               <td>R$ {mensalidade.valor !== undefined && mensalidade.valor !== null ? parseFloat(mensalidade.valor).toFixed(2).replace('.', ',') : '0,00'}</td>
-              <td>{mensalidade.dataVencimento || 'Sem data'}</td>
+              <td>{ new Date(mensalidade.dataVencimento).toLocaleString()  || 'Sem data'}</td>
               <td>{determinarStatus(mensalidade)}</td>
               <td>
-                <button
+              <button
                   onClick={() => editarMensalidade(mensalidade)}
                   style={{ marginRight: '5px', padding: '5px', backgroundColor: 'green', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
                 >
                   Editar
+                </button>
+                <button
+                  onClick={() => baixarPagamento(mensalidade.id)}
+                  style={{ marginRight: '5px', padding: '5px', backgroundColor: 'blue', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+                >
+                  Pago
                 </button>
                 <button
                   onClick={() => excluirMensalidade(mensalidade.id)}
