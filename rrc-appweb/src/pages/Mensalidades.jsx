@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import MensalidadeService from '../services/Mensalidades.js';  
 
 const GerenciarMensalidades = () => {
-  const [mensalidades, setMensalidades] = useState([]);  
-
+  const [mensalidades, setMensalidades] = useState([]);
+  const [mensalidadesFiltradas, setMensalidadesFiltradas] = useState([]);
   const [descricao, setDescricao] = useState('');
   const [categoria, setCategoria] = useState('');
   const [valor, setValor] = useState('');
   const [dataVencimento, setDataVencimento] = useState('');
   const [status, setStatus] = useState('Pendente');
   const [editando, setEditando] = useState(null);
-
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
 
   useEffect(() => {
     const mensalidadeService = new MensalidadeService();
@@ -18,9 +19,9 @@ const GerenciarMensalidades = () => {
       try {
         const dados = await mensalidadeService.getAllMensalidades();
         
-    
         if (dados && Array.isArray(dados.rows)) {
           setMensalidades(dados.rows);
+          setMensalidadesFiltradas(dados.rows);
         } else {
           console.error("A resposta não contém 'rows' como um array:", dados);
         }
@@ -30,7 +31,16 @@ const GerenciarMensalidades = () => {
     };
     carregarMensalidades();
   }, []); 
-  
+
+  useEffect(() => {
+    // Filtrar as mensalidades com base no termo de pesquisa
+    const mensalidadesFiltradas = mensalidades.filter(mensalidade => 
+      mensalidade.categoria.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mensalidade.descricao.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setMensalidadesFiltradas(mensalidadesFiltradas);
+  }, [searchTerm, mensalidades]);
+
   const determinarStatus = (mensalidade) => {
     const hoje = new Date();
     const vencimento = new Date(mensalidade.dataVencimento);
@@ -39,7 +49,7 @@ const GerenciarMensalidades = () => {
     if (vencimento < hoje) return 'Atrasado';
     return 'Pendente';
   };
-  
+
   const validarValor = (valor) => {
     const valorConvertido = valor.replace(',', '.');
     if (isNaN(valorConvertido) || parseFloat(valorConvertido) < 0) {
@@ -73,7 +83,6 @@ const GerenciarMensalidades = () => {
 
   const baixarPagamento = async (id) => {
     try {
-      // Localize a mensalidade que será atualizada
       const mensalidadeParaAtualizar = mensalidades.find((mensalidade) => mensalidade.id === id);
   
       if (!mensalidadeParaAtualizar) {
@@ -81,7 +90,6 @@ const GerenciarMensalidades = () => {
         return;
       }
   
-      // Envie todos os campos existentes, alterando apenas o status para "Pago"
       const mensalidadeAtualizada = {
         ...mensalidadeParaAtualizar,
         status: 'Pago',
@@ -90,7 +98,6 @@ const GerenciarMensalidades = () => {
       const mensalidadeService = new MensalidadeService();
       await mensalidadeService.atualizarMensalidade(id, mensalidadeAtualizada);
   
-      // Atualize o estado local
       setMensalidades((prevMensalidades) =>
         prevMensalidades.map((mensalidade) =>
           mensalidade.id === id ? { ...mensalidade, status: 'Pago' } : mensalidade
@@ -100,7 +107,6 @@ const GerenciarMensalidades = () => {
       console.error('Erro ao atualizar o status para Pago:', error);
     }
   };
-  
 
   const salvarMensalidade = async () => {
     if (!categoria || !valor || !dataVencimento) {
@@ -125,20 +131,16 @@ const GerenciarMensalidades = () => {
       const mensalidadeService = new MensalidadeService();
 
       if (editando) {
-     
         await mensalidadeService.atualizarMensalidade(editando.id, novaMensalidade);
         setMensalidades(mensalidades.map((mensalidade) => mensalidade.id === editando.id ? { ...mensalidade, ...novaMensalidade } : mensalidade));
       } else {
-     
         await mensalidadeService.adicionarMensalidade(novaMensalidade);
       }
 
-      
       const dados = await mensalidadeService.getAllMensalidades();
-      
-   
       if (dados && Array.isArray(dados.rows)) {
         setMensalidades(dados.rows);
+        setMensalidadesFiltradas(dados.rows);
       } else {
         console.error("A resposta não contém 'rows' como um array:", dados);
       }
@@ -148,7 +150,6 @@ const GerenciarMensalidades = () => {
       console.error('Erro ao salvar mensalidade:', error);
     }
   };
-  
 
   const excluirMensalidade = async (id) => {
     if (window.confirm('Tem certeza que deseja excluir esta mensalidade?')) {
@@ -156,12 +157,10 @@ const GerenciarMensalidades = () => {
         const mensalidadeService = new MensalidadeService(); 
         await mensalidadeService.excluirMensalidade(id);
 
-       
         const dados = await mensalidadeService.getAllMensalidades();
-        
-       
         if (dados && Array.isArray(dados.rows)) {
           setMensalidades(dados.rows);
+          setMensalidadesFiltradas(dados.rows);
         } else {
           console.error("A resposta não contém 'rows' como um array:", dados);
         }
@@ -189,12 +188,33 @@ const GerenciarMensalidades = () => {
     setEditando(null);
   };
 
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    const sortedMensalidades = [...mensalidadesFiltradas].sort((a, b) => {
+      if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+      if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+    setMensalidadesFiltradas(sortedMensalidades);
+    setSortConfig({ key, direction });
+  };
+
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial', textAlign: 'center' }}>
       <h2>Cadastrar Despesas</h2>
 
-      {/* Formulário */}
       <div style={{ marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Buscar por categoria ou descrição"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ margin: '5px', padding: '10px', width: '300px' }}
+        />
+        {/* Formulário */}
         <input
           type="text"
           placeholder="Categoria *"
@@ -202,7 +222,7 @@ const GerenciarMensalidades = () => {
           onChange={(e) => setCategoria(e.target.value)}
           style={{ margin: '5px', padding: '10px', width: '200px' }}
         />
-         <input
+        <input
           type="text"
           placeholder="Descrição (Opcional)"
           value={descricao}
@@ -241,28 +261,27 @@ const GerenciarMensalidades = () => {
         )}
       </div>
 
-      {/* Tabela */}
       <table border="1" style={{ width: '100%', marginTop: '20px', textAlign: 'left' }}>
         <thead>
           <tr>
-            <th>Categoria</th>
-            <th>Descrição</th>
-            <th>Valor</th>
-            <th>Data de Vencimento</th>
+            <th onClick={() => handleSort('categoria')}>Categoria</th>
+            <th onClick={() => handleSort('descricao')}>Descrição</th>
+            <th onClick={() => handleSort('valor')}>Valor</th>
+            <th onClick={() => handleSort('dataVencimento')}>Data de Vencimento</th>
             <th>Status</th>
             <th>Ações</th>
           </tr>
         </thead>
         <tbody>
-          {mensalidades.map((mensalidade) => (
+          {mensalidadesFiltradas.map((mensalidade) => (
             <tr key={mensalidade.id}>
               <td>{mensalidade.categoria || 'Sem categoria'}</td>
               <td>{mensalidade.descricao || 'Sem descrição'}</td>
               <td>R$ {mensalidade.valor !== undefined && mensalidade.valor !== null ? parseFloat(mensalidade.valor).toFixed(2).replace('.', ',') : '0,00'}</td>
-              <td>{ new Date(mensalidade.dataVencimento).toLocaleString()  || 'Sem data'}</td>
+              <td>{ new Date(mensalidade.dataVencimento).toLocaleString() || 'Sem data'}</td>
               <td>{determinarStatus(mensalidade)}</td>
               <td>
-              <button
+                <button
                   onClick={() => editarMensalidade(mensalidade)}
                   style={{ marginRight: '5px', padding: '5px', backgroundColor: 'green', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
                 >
