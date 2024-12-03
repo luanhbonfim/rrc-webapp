@@ -32,9 +32,6 @@ export default function MenuHamburguer() {
                         <Link to="/campanha" className="link-hamburg">
                             <li>Cadastrar campanhas</li>
                         </Link>
-                        <Link to="/list-campanhas" className="link-hamburg">
-                            <li>Campanhas cadastradas</li>
-                        </Link>
                         <li>Cadastrar associados</li>
                         <li>Cadastrar títulos</li>
                         <li>Cadastrar doações</li>
@@ -44,6 +41,11 @@ export default function MenuHamburguer() {
                         <li>Cadastrar cargos</li>
                         <Link to="/gerenciar-tipos-produtos" className="link-hamburg">
                             <li>Cadastrar Produtos</li>
+                        </Link>
+                        <div className='side-cabecalho'>
+                        </div>
+                        <Link to="/list-campanhas" className="link-hamburg">
+                            <li>Campanhas cadastradas</li>
                         </Link>
                     </ul>
                 </div>

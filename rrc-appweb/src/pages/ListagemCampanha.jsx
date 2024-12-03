@@ -5,6 +5,10 @@ import CampanhaService from '../services/CampanhaService.js';
 const campanhaService = new CampanhaService();
 
 const formatarData = (dataISO) => {
+  if (!dataISO) {   
+    return 'Não há data para término para esta campanha';  
+  }
+  
   const data = new Date(dataISO);
   if (data instanceof Date && !isNaN(data)) {
     return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' }).format(data);
@@ -144,7 +148,7 @@ export default function ListagemCampanha() {
         <table className="table-campanhas">
           <thead>
             <tr>
-              <th>Nome</th>
+              <th>Campanha</th>
               <th>Descrição</th>
               <th>Data de Início</th>
               <th>Data de Fim</th>
@@ -188,7 +192,7 @@ export default function ListagemCampanha() {
                     <td>
                       <input
                         type="date"
-                        value={campanhaEditando.c_data_fim}
+                        value={formatarData(campanhaEditando.c_data_fim)}
                         onChange={(e) => setCampanhaEditando({ ...campanhaEditando, c_data_fim: e.target.value })}
                         required
                       />
